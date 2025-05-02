@@ -27,7 +27,7 @@ const AdBanner: React.FC<AdBannerProps> = ({
       <ins
         className="adsbygoogle"
         style={{ display: 'block', textAlign: 'center' }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" // Replace with your AdSense Publisher ID
+        data-ad-client="ca-pub-1866807515338299" // Updated with your AdSense Publisher ID
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive="true"
