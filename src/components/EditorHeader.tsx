@@ -6,12 +6,14 @@ interface EditorHeaderProps {
   currentImageBlob: Blob | null;
   formatFileSize: (bytes: number) => string;
   onResetEditor: () => void;
+  onQuickDownload?: () => void; // Added this prop
 }
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({
   currentImageBlob,
   formatFileSize,
   onResetEditor,
+  onQuickDownload,
 }) => {
   return (
     <div className="flex justify-between items-center">
