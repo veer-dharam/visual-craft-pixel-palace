@@ -18,7 +18,7 @@ const Index = () => {
             <div className="bg-editor-purple rounded-full p-2">
               <Image className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">PixelCraft</h1>
+            <h1 className="text-2xl font-bold text-gray-900">PixelCraft.veer</h1>
           </div>
         </div>
       </header>
