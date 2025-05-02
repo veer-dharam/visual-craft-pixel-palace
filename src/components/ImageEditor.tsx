@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader } from 'lucide-react';
 import { toast } from 'sonner';
@@ -11,6 +12,7 @@ import EditToolbar from './EditToolbar';
 import ImageDownloader from './ImageDownloader';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
@@ -29,6 +31,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
   const [rotationAngle, setRotationAngle] = useState(0);
   const [originalFileSize, setOriginalFileSize] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useIsMobile();
   
   // Load the image when imageFile changes
   useEffect(() => {
@@ -201,7 +204,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
   
   const renderToolControls = () => {
     if (!selectedTool) return (
-      <div className="flex flex-col h-full justify-center items-center text-center p-6 gap-4">
+      <div className="flex flex-col h-full justify-center items-center text-center p-4 sm:p-6 gap-4">
         <p className="text-gray-600">Select a tool from the toolbar above to edit your image</p>
         {currentImageBlob && imageFile && (
           <ImageDownloader
@@ -275,9 +278,9 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Edit Image</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Edit Image</h2>
         <div className="flex items-center gap-2">
           {currentImageBlob && (
             <span className="text-sm text-gray-500">
@@ -293,16 +296,16 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
         </div>
       </div>
       
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:gap-6">
         <EditToolbar 
           selectedTool={selectedTool} 
           onSelectTool={handleSelectTool}
           hasImage={!!currentImage}
         />
         
-        <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 sm:gap-6">
           <div className="lg:col-span-4 flex flex-col gap-4">
-            <div className="relative bg-gray-100 border border-gray-200 rounded-lg overflow-hidden h-[350px] flex items-center justify-center">
+            <div className="relative bg-gray-100 border border-gray-200 rounded-lg overflow-hidden h-[200px] sm:h-[350px] flex items-center justify-center">
               {isProcessing && (
                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
                   <Loader className="h-8 w-8 text-white animate-spin" />
@@ -319,7 +322,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
               )}
             </div>
             
-            {currentImageBlob && imageFile && !selectedTool && (
+            {currentImageBlob && imageFile && !selectedTool && !isMobile && (
               <div className="flex justify-center">
                 <ImageDownloader
                   imageBlob={currentImageBlob}
@@ -329,10 +332,19 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
             )}
           </div>
           
-          <div className="lg:col-span-3 bg-white rounded-lg p-4 shadow-sm border border-gray-200 min-h-[300px]">
+          <div className="lg:col-span-3 bg-white rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 min-h-[250px] sm:min-h-[300px]">
             {renderToolControls()}
           </div>
         </div>
+        
+        {currentImageBlob && imageFile && !selectedTool && isMobile && (
+          <div className="mt-2">
+            <ImageDownloader
+              imageBlob={currentImageBlob}
+              originalFileName={imageFile.name}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

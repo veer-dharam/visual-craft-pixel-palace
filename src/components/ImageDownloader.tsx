@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { compressImage } from '@/lib/imageUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageDownloaderProps {
   imageBlob: Blob;
@@ -18,6 +18,7 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
 }) => {
   const [fileFormat, setFileFormat] = useState<'png' | 'jpeg' | 'webp'>('png');
   const [quality, setQuality] = useState(90);
+  const isMobile = useIsMobile();
   
   const getFileName = () => {
     const baseName = originalFileName.split('.')[0] || 'image';
@@ -32,6 +33,7 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
       
       await new Promise<void>((resolve) => {
         img.onload = () => resolve();
+        img.onerror = () => resolve(); // Still resolve to handle errors gracefully
       });
       
       let downloadBlob = imageBlob;
@@ -45,10 +47,11 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
         
         if (ctx) {
           ctx.drawImage(img, 0, 0);
-          downloadBlob = await new Promise<Blob>((resolve) => {
+          downloadBlob = await new Promise<Blob>((resolve, reject) => {
             canvas.toBlob(
               (blob) => {
                 if (blob) resolve(blob);
+                else reject(new Error("Failed to create blob"));
               },
               `image/${fileFormat}`,
               quality / 100
@@ -59,11 +62,15 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
       
       // Create download link and trigger it
       const downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(downloadBlob);
+      const url = URL.createObjectURL(downloadBlob);
+      downloadLink.href = url;
       downloadLink.download = getFileName();
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+      
+      // Clean up the URL object after a short delay
+      setTimeout(() => URL.revokeObjectURL(url), 100);
     } catch (error) {
       console.error('Error downloading image:', error);
     }

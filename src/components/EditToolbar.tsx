@@ -14,6 +14,7 @@ import {
   TooltipContent, 
   TooltipTrigger 
 } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
@@ -28,41 +29,43 @@ const EditToolbar: React.FC<EditToolbarProps> = ({
   onSelectTool,
   hasImage,
 }) => {
+  const isMobile = useIsMobile();
+  
   const tools = [
     {
       id: 'resize' as Tool,
-      icon: <Maximize size={20} />,
-      label: 'Resize Dimensions',
+      icon: <Maximize size={isMobile ? 18 : 20} />,
+      label: 'Resize',
       description: 'Change image width and height'
     },
     {
       id: 'compress' as Tool,
-      icon: <ImageDown size={20} />,
-      label: 'Compress File Size',
+      icon: <ImageDown size={isMobile ? 18 : 20} />,
+      label: 'Compress',
       description: 'Reduce image file size'
     },
     {
       id: 'crop' as Tool,
-      icon: <Crop size={20} />,
+      icon: <Crop size={isMobile ? 18 : 20} />,
       label: 'Crop',
       description: 'Crop image to selected area'
     },
     {
       id: 'rotate' as Tool,
-      icon: <RotateCw size={20} />,
+      icon: <RotateCw size={isMobile ? 18 : 20} />,
       label: 'Rotate',
       description: 'Rotate image left or right'
     },
     {
       id: 'background' as Tool,
-      icon: <Wand size={20} />,
-      label: 'Remove Background',
+      icon: <Wand size={isMobile ? 18 : 20} />,
+      label: 'BG Remove',
       description: 'Remove image background'
     },
     {
       id: 'adjust' as Tool,
-      icon: <Sun size={20} />,
-      label: 'Adjustments',
+      icon: <Sun size={isMobile ? 18 : 20} />,
+      label: 'Adjust',
       description: 'Adjust brightness and contrast'
     },
   ];
@@ -78,24 +81,24 @@ const EditToolbar: React.FC<EditToolbarProps> = ({
   return (
     <div className="flex flex-col gap-3">
       <h3 className="text-sm font-medium text-gray-600">Edit Tools</h3>
-      <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2 bg-white p-3 rounded-lg shadow-sm">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 bg-white p-2 sm:p-3 rounded-lg shadow-sm overflow-x-auto">
         {tools.map((tool) => (
-          <div key={tool.id}>
-            <Tooltip>
+          <div key={tool.id} className="min-w-fit">
+            <Tooltip delayDuration={isMobile ? 1000 : 300}>
               <TooltipTrigger asChild>
                 <Button
                   variant={selectedTool === tool.id ? 'default' : 'ghost'}
-                  size="sm"
+                  size={isMobile ? "sm" : "default"}
                   onClick={() => handleToolClick(tool.id)}
                   disabled={!hasImage}
-                  className={`flex flex-col items-center justify-center p-2 h-auto ${
+                  className={`flex flex-col items-center justify-center p-1 sm:p-2 h-auto w-full ${
                     selectedTool === tool.id 
                       ? 'bg-editor-purple text-white' 
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   {tool.icon}
-                  <span className="text-xs mt-1">{tool.label}</span>
+                  <span className="text-xs mt-1 line-clamp-1">{tool.label}</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>

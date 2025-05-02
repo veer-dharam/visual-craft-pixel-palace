@@ -4,6 +4,7 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { compressImage } from '@/lib/imageUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CompressionControlsProps {
   imageElement: HTMLImageElement;
@@ -19,6 +20,7 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
   const [quality, setQuality] = useState(90);
   const [targetSize, setTargetSize] = useState(Math.ceil(originalFileSize / 1024));
   const [compressing, setCompressing] = useState(false);
+  const isMobile = useIsMobile();
 
   const formatFileSize = (sizeInKB: number): string => {
     if (sizeInKB < 1024) {
@@ -69,13 +71,16 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium mb-2">Compress Image</h3>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-500 mb-3">
         Original size: {formatFileSize(originalFileSize / 1024)}
       </p>
       
       <div className="space-y-4">
         <div className="flex flex-col space-y-2">
-          <Label htmlFor="quality">Quality: {quality}%</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="quality">Quality</Label>
+            <span className="text-sm text-gray-600 font-medium">{quality}%</span>
+          </div>
           <Slider
             id="quality"
             min={5}
@@ -83,11 +88,15 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
             step={1}
             value={[quality]}
             onValueChange={([value]) => setQuality(value)}
+            className={isMobile ? "py-4" : ""}
           />
         </div>
         
         <div className="flex flex-col space-y-2">
-          <Label htmlFor="target-size">Target Size: {formatFileSize(targetSize)}</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="target-size">Target Size</Label>
+            <span className="text-sm text-gray-600 font-medium">{formatFileSize(targetSize)}</span>
+          </div>
           <Slider
             id="target-size"
             min={10}
@@ -95,6 +104,7 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
             step={10}
             value={[targetSize]}
             onValueChange={([value]) => setTargetSize(value)}
+            className={isMobile ? "py-4" : ""}
           />
         </div>
         
