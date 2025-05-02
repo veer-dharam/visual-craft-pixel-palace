@@ -1,18 +1,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Loader, Download } from 'lucide-react';
 import { toast } from 'sonner';
-import { loadImage, resizeImage, rotateImage, adjustImage, blobToFile } from '@/lib/imageUtils';
-import ResizeControls from './ResizeControls';
-import CropControls from './CropControls';
-import CompressionControls from './CompressionControls';
-import BackgroundRemover from './BackgroundRemover';
-import AdjustmentControls from './AdjustmentControls';
+import { loadImage, resizeImage, rotateImage, adjustImage } from '@/lib/imageUtils';
 import EditToolbar from './EditToolbar';
 import ImageDownloader from './ImageDownloader';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from '@/hooks/use-mobile';
+import EditorHeader from './EditorHeader';
+import ImagePreview from './ImagePreview';
+import ToolRenderer from './ToolRenderer';
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
@@ -218,110 +213,15 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
     document.body.removeChild(downloadLink);
     setTimeout(() => URL.revokeObjectURL(url), 100);
   };
-  
-  const renderToolControls = () => {
-    if (!selectedTool) return (
-      <div className="flex flex-col h-full justify-center items-center text-center p-4 sm:p-6 gap-4">
-        <p className="text-gray-600">Select a tool from the toolbar above to edit your image</p>
-        {currentImageBlob && imageFile && (
-          <ImageDownloader
-            imageBlob={currentImageBlob}
-            originalFileName={imageFile.name}
-          />
-        )}
-      </div>
-    );
-    
-    switch(selectedTool) {
-      case 'resize':
-        return currentImage ? (
-          <ResizeControls
-            originalWidth={originalDimensions.width}
-            originalHeight={originalDimensions.height}
-            onResize={handleResize}
-          />
-        ) : null;
-        
-      case 'crop':
-        return imageUrl ? (
-          <CropControls 
-            imageUrl={imageUrl}
-            onCropComplete={handleCropComplete}
-          />
-        ) : null;
-        
-      case 'compress':
-        return currentImage ? (
-          <CompressionControls
-            imageElement={currentImage}
-            originalFileSize={originalFileSize}
-            onCompressionComplete={handleCompressionComplete}
-          />
-        ) : null;
-        
-      case 'background':
-        return imageFile ? (
-          <BackgroundRemover
-            imageFile={imageFile}
-            onProcessingComplete={handleBackgroundRemovalComplete}
-          />
-        ) : null;
-        
-      case 'adjust':
-        return (
-          <AdjustmentControls
-            onApplyAdjustments={handleApplyAdjustments}
-          />
-        );
-        
-      case 'rotate':
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium mb-2">Rotate Image</h3>
-            <div className="flex justify-center gap-4">
-              <Button onClick={() => handleRotate('counterclockwise')}>
-                Rotate Left
-              </Button>
-              <Button onClick={() => handleRotate('clockwise')}>
-                Rotate Right
-              </Button>
-            </div>
-          </div>
-        );
-        
-      default:
-        return null;
-    }
-  };
 
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Edit Image</h2>
-        <div className="flex items-center gap-2">
-          {currentImageBlob && (
-            <span className="text-sm text-gray-500">
-              {formatFileSize(currentImageBlob.size)}
-            </span>
-          )}
-          {currentImageBlob && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleQuickDownload}
-              className="flex items-center gap-1"
-            >
-              <Download size={16} /> Download
-            </Button>
-          )}
-          <button
-            onClick={onResetEditor}
-            className="text-sm text-gray-500 hover:text-gray-700"
-          >
-            Start Over
-          </button>
-        </div>
-      </div>
+      <EditorHeader 
+        currentImageBlob={currentImageBlob}
+        formatFileSize={formatFileSize}
+        onQuickDownload={handleQuickDownload}
+        onResetEditor={onResetEditor}
+      />
       
       <div className="flex flex-col gap-4 sm:gap-6">
         <EditToolbar 
@@ -332,22 +232,11 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
         
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 sm:gap-6">
           <div className="lg:col-span-4 flex flex-col gap-4">
-            <div className="relative bg-gray-100 border border-gray-200 rounded-lg overflow-hidden h-[200px] sm:h-[350px] flex items-center justify-center">
-              {isProcessing && (
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
-                  <Loader className="h-8 w-8 text-white animate-spin" />
-                </div>
-              )}
-              
-              {currentImage ? (
-                <canvas
-                  ref={canvasRef}
-                  className="max-h-full max-w-full object-contain"
-                />
-              ) : (
-                <div className="text-gray-400">No image to preview</div>
-              )}
-            </div>
+            <ImagePreview 
+              canvasRef={canvasRef}
+              currentImage={currentImage}
+              isProcessing={isProcessing}
+            />
             
             {currentImageBlob && imageFile && !selectedTool && !isMobile && (
               <div className="flex justify-center">
@@ -360,7 +249,21 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
           </div>
           
           <div className="lg:col-span-3 bg-white rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 min-h-[250px] sm:min-h-[300px]">
-            {renderToolControls()}
+            <ToolRenderer
+              selectedTool={selectedTool}
+              imageUrl={imageUrl}
+              currentImage={currentImage}
+              imageFile={imageFile}
+              currentImageBlob={currentImageBlob}
+              originalDimensions={originalDimensions}
+              originalFileSize={originalFileSize}
+              onResize={handleResize}
+              onRotate={handleRotate}
+              onCropComplete={handleCropComplete}
+              onApplyAdjustments={handleApplyAdjustments}
+              onCompressionComplete={handleCompressionComplete}
+              onBackgroundRemovalComplete={handleBackgroundRemovalComplete}
+            />
           </div>
         </div>
         
