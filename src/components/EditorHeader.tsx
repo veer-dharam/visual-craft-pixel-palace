@@ -1,19 +1,16 @@
 
 import React from 'react';
-import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface EditorHeaderProps {
   currentImageBlob: Blob | null;
   formatFileSize: (bytes: number) => string;
-  onQuickDownload: () => void;
   onResetEditor: () => void;
 }
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({
   currentImageBlob,
   formatFileSize,
-  onQuickDownload,
   onResetEditor,
 }) => {
   return (
@@ -24,16 +21,6 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           <span className="text-sm text-gray-500">
             {formatFileSize(currentImageBlob.size)}
           </span>
-        )}
-        {currentImageBlob && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onQuickDownload}
-            className="flex items-center gap-1"
-          >
-            <Download size={16} /> Download
-          </Button>
         )}
         <button
           onClick={onResetEditor}

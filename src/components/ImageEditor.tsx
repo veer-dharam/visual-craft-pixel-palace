@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { loadImage, resizeImage, rotateImage, adjustImage } from '@/lib/imageUtils';
@@ -237,15 +236,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
               currentImage={currentImage}
               isProcessing={isProcessing}
             />
-            
-            {currentImageBlob && imageFile && !selectedTool && !isMobile && (
-              <div className="flex justify-center">
-                <ImageDownloader
-                  imageBlob={currentImageBlob}
-                  originalFileName={imageFile.name}
-                />
-              </div>
-            )}
           </div>
           
           <div className="lg:col-span-3 bg-white rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 min-h-[250px] sm:min-h-[300px]">
@@ -266,15 +256,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
             />
           </div>
         </div>
-        
-        {currentImageBlob && imageFile && !selectedTool && isMobile && (
-          <div className="mt-2">
-            <ImageDownloader
-              imageBlob={currentImageBlob}
-              originalFileName={imageFile.name}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

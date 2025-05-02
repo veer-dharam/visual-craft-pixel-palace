@@ -7,6 +7,7 @@ import BackgroundRemover from './BackgroundRemover';
 import AdjustmentControls from './AdjustmentControls';
 import ImageDownloader from './ImageDownloader';
 import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
@@ -41,6 +42,19 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
   onCompressionComplete,
   onBackgroundRemovalComplete,
 }) => {
+  const renderDownloadButton = () => {
+    if (!currentImageBlob || !imageFile) return null;
+    
+    return (
+      <div className="mt-4 pt-3 border-t border-gray-200">
+        <ImageDownloader
+          imageBlob={currentImageBlob}
+          originalFileName={imageFile.name}
+        />
+      </div>
+    );
+  };
+
   if (!selectedTool) {
     return (
       <div className="flex flex-col h-full justify-center items-center text-center p-4 sm:p-6 gap-4">
@@ -55,66 +69,94 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
     );
   }
 
+  let toolContent;
+  
   switch(selectedTool) {
     case 'resize':
-      return currentImage ? (
-        <ResizeControls
-          originalWidth={originalDimensions.width}
-          originalHeight={originalDimensions.height}
-          onResize={onResize}
-        />
+      toolContent = currentImage ? (
+        <>
+          <ResizeControls
+            originalWidth={originalDimensions.width}
+            originalHeight={originalDimensions.height}
+            onResize={onResize}
+          />
+          {renderDownloadButton()}
+        </>
       ) : null;
+      break;
       
     case 'crop':
-      return imageUrl ? (
-        <CropControls 
-          imageUrl={imageUrl}
-          onCropComplete={onCropComplete}
-        />
+      toolContent = imageUrl ? (
+        <>
+          <CropControls 
+            imageUrl={imageUrl}
+            onCropComplete={onCropComplete}
+          />
+          {renderDownloadButton()}
+        </>
       ) : null;
+      break;
       
     case 'compress':
-      return currentImage ? (
-        <CompressionControls
-          imageElement={currentImage}
-          originalFileSize={originalFileSize}
-          onCompressionComplete={onCompressionComplete}
-        />
+      toolContent = currentImage ? (
+        <>
+          <CompressionControls
+            imageElement={currentImage}
+            originalFileSize={originalFileSize}
+            onCompressionComplete={onCompressionComplete}
+          />
+          {renderDownloadButton()}
+        </>
       ) : null;
+      break;
       
     case 'background':
-      return imageFile ? (
-        <BackgroundRemover
-          imageFile={imageFile}
-          onProcessingComplete={onBackgroundRemovalComplete}
-        />
+      toolContent = imageFile ? (
+        <>
+          <BackgroundRemover
+            imageFile={imageFile}
+            onProcessingComplete={onBackgroundRemovalComplete}
+          />
+          {renderDownloadButton()}
+        </>
       ) : null;
+      break;
       
     case 'adjust':
-      return (
-        <AdjustmentControls
-          onApplyAdjustments={onApplyAdjustments}
-        />
+      toolContent = (
+        <>
+          <AdjustmentControls
+            onApplyAdjustments={onApplyAdjustments}
+          />
+          {renderDownloadButton()}
+        </>
       );
+      break;
       
     case 'rotate':
-      return (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium mb-2">Rotate Image</h3>
-          <div className="flex justify-center gap-4">
-            <Button onClick={() => onRotate('counterclockwise')}>
-              Rotate Left
-            </Button>
-            <Button onClick={() => onRotate('clockwise')}>
-              Rotate Right
-            </Button>
+      toolContent = (
+        <>
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium mb-2">Rotate Image</h3>
+            <div className="flex justify-center gap-4">
+              <Button onClick={() => onRotate('counterclockwise')}>
+                Rotate Left
+              </Button>
+              <Button onClick={() => onRotate('clockwise')}>
+                Rotate Right
+              </Button>
+            </div>
           </div>
-        </div>
+          {renderDownloadButton()}
+        </>
       );
+      break;
       
     default:
-      return null;
+      toolContent = null;
   }
+
+  return <div className="space-y-4">{toolContent}</div>;
 };
 
 export default ToolRenderer;
