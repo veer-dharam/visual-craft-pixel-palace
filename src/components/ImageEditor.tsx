@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader } from 'lucide-react';
 import { toast } from 'sonner';
@@ -8,6 +7,7 @@ import BackgroundRemover from './BackgroundRemover';
 import AdjustmentControls from './AdjustmentControls';
 import EditToolbar from './EditToolbar';
 import ImageDownloader from './ImageDownloader';
+import { Button } from '@/components/ui/button';
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust';
 
