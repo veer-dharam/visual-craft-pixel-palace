@@ -9,7 +9,11 @@ import {
   Wand
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipTrigger 
+} from '@/components/ui/tooltip';
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
@@ -76,27 +80,29 @@ const EditToolbar: React.FC<EditToolbarProps> = ({
       <h3 className="text-sm font-medium text-gray-600">Edit Tools</h3>
       <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2 bg-white p-3 rounded-lg shadow-sm">
         {tools.map((tool) => (
-          <Tooltip key={tool.id}>
-            <TooltipTrigger asChild>
-              <Button
-                variant={selectedTool === tool.id ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => handleToolClick(tool.id)}
-                disabled={!hasImage}
-                className={`flex flex-col items-center justify-center p-2 h-auto ${
-                  selectedTool === tool.id 
-                    ? 'bg-editor-purple text-white' 
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                {tool.icon}
-                <span className="text-xs mt-1">{tool.label}</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{tool.description}</p>
-            </TooltipContent>
-          </Tooltip>
+          <div key={tool.id}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={selectedTool === tool.id ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => handleToolClick(tool.id)}
+                  disabled={!hasImage}
+                  className={`flex flex-col items-center justify-center p-2 h-auto ${
+                    selectedTool === tool.id 
+                      ? 'bg-editor-purple text-white' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {tool.icon}
+                  <span className="text-xs mt-1">{tool.label}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{tool.description}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         ))}
       </div>
     </div>
