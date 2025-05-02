@@ -1,15 +1,18 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader } from 'lucide-react';
 import { toast } from 'sonner';
-import { loadImage, resizeImage, rotateImage, adjustImage } from '@/lib/imageUtils';
+import { loadImage, resizeImage, rotateImage, adjustImage, blobToFile } from '@/lib/imageUtils';
 import ResizeControls from './ResizeControls';
+import CropControls from './CropControls';
+import CompressionControls from './CompressionControls';
 import BackgroundRemover from './BackgroundRemover';
 import AdjustmentControls from './AdjustmentControls';
 import EditToolbar from './EditToolbar';
 import ImageDownloader from './ImageDownloader';
 import { Button } from '@/components/ui/button';
 
-type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust';
+type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
 interface ImageEditorProps {
   imageFile: File | null;
@@ -20,9 +23,11 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [currentImage, setCurrentImage] = useState<HTMLImageElement | null>(null);
   const [currentImageBlob, setCurrentImageBlob] = useState<Blob | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [originalDimensions, setOriginalDimensions] = useState({ width: 0, height: 0 });
   const [rotationAngle, setRotationAngle] = useState(0);
+  const [originalFileSize, setOriginalFileSize] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // Load the image when imageFile changes
@@ -36,6 +41,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
         setCurrentImage(img);
         setOriginalDimensions({ width: img.width, height: img.height });
         setCurrentImageBlob(imageFile);
+        setOriginalFileSize(imageFile.size);
+        setImageUrl(URL.createObjectURL(imageFile));
       } catch (error) {
         console.error('Error loading image:', error);
         toast.error('Failed to load image. Please try again.');
@@ -45,6 +52,11 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
     };
     
     loadImageAndDraw();
+    
+    // Clean up URL object on unmount
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+    };
   }, [imageFile]);
   
   // Draw image on canvas when currentImage changes
@@ -64,6 +76,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
     
     // Draw image
     ctx.drawImage(currentImage, 0, 0);
+    
+    // Update image URL for tools that need it
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+    if (currentImageBlob) {
+      setImageUrl(URL.createObjectURL(currentImageBlob));
+    }
   }, [currentImage]);
   
   const handleSelectTool = (tool: Tool | null) => {
@@ -128,6 +146,36 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
     } catch (error) {
       console.error('Error applying adjustments:', error);
       toast.error('Failed to apply adjustments. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    setIsProcessing(true);
+    try {
+      const croppedImg = await loadImage(new File([croppedBlob], "cropped.png", { type: "image/png" }));
+      setCurrentImage(croppedImg);
+      setCurrentImageBlob(croppedBlob);
+      toast.success('Image cropped successfully!');
+    } catch (error) {
+      console.error('Error setting cropped image:', error);
+      toast.error('Failed to crop image. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  
+  const handleCompressionComplete = async (compressedBlob: Blob, sizeKb: number) => {
+    setIsProcessing(true);
+    try {
+      const compressedImg = await loadImage(new File([compressedBlob], "compressed.png", { type: "image/png" }));
+      setCurrentImage(compressedImg);
+      setCurrentImageBlob(compressedBlob);
+      toast.success(`Image compressed to ${sizeKb.toFixed(1)} KB successfully!`);
+    } catch (error) {
+      console.error('Error setting compressed image:', error);
+      toast.error('Failed to compress image. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -206,6 +254,21 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
               originalWidth={originalDimensions.width}
               originalHeight={originalDimensions.height}
               onResize={handleResize}
+            />
+          )}
+          
+          {selectedTool === 'crop' && imageUrl && (
+            <CropControls 
+              imageUrl={imageUrl}
+              onCropComplete={handleCropComplete}
+            />
+          )}
+          
+          {selectedTool === 'compress' && currentImage && (
+            <CompressionControls
+              imageElement={currentImage}
+              originalFileSize={originalFileSize}
+              onCompressionComplete={handleCompressionComplete}
             />
           )}
           

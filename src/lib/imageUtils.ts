@@ -1,4 +1,3 @@
-
 // Function to resize an image
 export const resizeImage = (
   image: HTMLImageElement,
@@ -155,7 +154,7 @@ export const loadImage = (file: File): Promise<HTMLImageElement> => {
   });
 };
 
-// Function to compress image by quality
+// Enhanced function to compress image by quality
 export const compressImage = (
   image: HTMLImageElement,
   quality: number

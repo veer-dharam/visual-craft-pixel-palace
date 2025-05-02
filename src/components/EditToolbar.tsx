@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { Crop, RotateCcw, RotateCw, Sun, Contrast, Image } from 'lucide-react';
+import { Crop, RotateCw, Sun, Image, ImageDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust';
+type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
 interface EditToolbarProps {
   selectedTool: Tool | null;
@@ -21,7 +21,12 @@ const EditToolbar: React.FC<EditToolbarProps> = ({
     {
       id: 'resize' as Tool,
       icon: <Image size={20} />,
-      label: 'Resize & Compress',
+      label: 'Resize Dimensions',
+    },
+    {
+      id: 'compress' as Tool,
+      icon: <ImageDown size={20} />,
+      label: 'Compress File Size',
     },
     {
       id: 'crop' as Tool,
