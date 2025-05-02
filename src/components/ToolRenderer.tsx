@@ -46,7 +46,7 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
     if (!currentImageBlob || !imageFile) return null;
     
     return (
-      <div className="mt-4 pt-3 border-t border-gray-200">
+      <div className="mt-4 pt-4 border-t border-gray-200">
         <ImageDownloader
           imageBlob={currentImageBlob}
           originalFileName={imageFile.name}
@@ -60,10 +60,12 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
       <div className="flex flex-col h-full justify-center items-center text-center p-4 sm:p-6 gap-4">
         <p className="text-gray-600">Select a tool from the toolbar above to edit your image</p>
         {currentImageBlob && imageFile && (
-          <ImageDownloader
-            imageBlob={currentImageBlob}
-            originalFileName={imageFile.name}
-          />
+          <div className="w-full max-w-xs">
+            <ImageDownloader
+              imageBlob={currentImageBlob}
+              originalFileName={imageFile.name}
+            />
+          </div>
         )}
       </div>
     );
@@ -74,68 +76,68 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
   switch(selectedTool) {
     case 'resize':
       toolContent = currentImage ? (
-        <>
+        <div className="space-y-4">
           <ResizeControls
             originalWidth={originalDimensions.width}
             originalHeight={originalDimensions.height}
             onResize={onResize}
           />
           {renderDownloadButton()}
-        </>
+        </div>
       ) : null;
       break;
       
     case 'crop':
       toolContent = imageUrl ? (
-        <>
+        <div className="space-y-4">
           <CropControls 
             imageUrl={imageUrl}
             onCropComplete={onCropComplete}
           />
           {renderDownloadButton()}
-        </>
+        </div>
       ) : null;
       break;
       
     case 'compress':
       toolContent = currentImage ? (
-        <>
+        <div className="space-y-4">
           <CompressionControls
             imageElement={currentImage}
             originalFileSize={originalFileSize}
             onCompressionComplete={onCompressionComplete}
           />
           {renderDownloadButton()}
-        </>
+        </div>
       ) : null;
       break;
       
     case 'background':
       toolContent = imageFile ? (
-        <>
+        <div className="space-y-4">
           <BackgroundRemover
             imageFile={imageFile}
             onProcessingComplete={onBackgroundRemovalComplete}
           />
           {renderDownloadButton()}
-        </>
+        </div>
       ) : null;
       break;
       
     case 'adjust':
       toolContent = (
-        <>
+        <div className="space-y-4">
           <AdjustmentControls
             onApplyAdjustments={onApplyAdjustments}
           />
           {renderDownloadButton()}
-        </>
+        </div>
       );
       break;
       
     case 'rotate':
       toolContent = (
-        <>
+        <div className="space-y-4">
           <div className="space-y-4">
             <h3 className="text-lg font-medium mb-2">Rotate Image</h3>
             <div className="flex justify-center gap-4">
@@ -148,7 +150,7 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
             </div>
           </div>
           {renderDownloadButton()}
-        </>
+        </div>
       );
       break;
       
@@ -156,7 +158,7 @@ const ToolRenderer: React.FC<ToolRendererProps> = ({
       toolContent = null;
   }
 
-  return <div className="space-y-4">{toolContent}</div>;
+  return <div>{toolContent}</div>;
 };
 
 export default ToolRenderer;

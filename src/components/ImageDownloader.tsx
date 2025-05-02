@@ -36,41 +36,42 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
         img.onerror = () => resolve(); // Still resolve to handle errors gracefully
       });
       
-      let downloadBlob = imageBlob;
+      // Always process the image to apply compression settings
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
       
-      // If not PNG or needs compression, process the image
-      if (fileFormat !== 'png' || quality < 100) {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0);
         
-        if (ctx) {
-          ctx.drawImage(img, 0, 0);
-          downloadBlob = await new Promise<Blob>((resolve, reject) => {
-            canvas.toBlob(
-              (blob) => {
-                if (blob) resolve(blob);
-                else reject(new Error("Failed to create blob"));
-              },
-              `image/${fileFormat}`,
-              quality / 100
-            );
-          });
-        }
+        // Create blob with specified format and quality
+        const downloadBlob = await new Promise<Blob>((resolve, reject) => {
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error("Failed to create blob"));
+            },
+            `image/${fileFormat}`,
+            fileFormat !== 'png' ? quality / 100 : undefined
+          );
+        });
+        
+        // Create download link and trigger it
+        const downloadLink = document.createElement('a');
+        const url = URL.createObjectURL(downloadBlob);
+        downloadLink.href = url;
+        downloadLink.download = getFileName();
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up the URL object after a short delay
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          URL.revokeObjectURL(img.src);
+        }, 100);
       }
-      
-      // Create download link and trigger it
-      const downloadLink = document.createElement('a');
-      const url = URL.createObjectURL(downloadBlob);
-      downloadLink.href = url;
-      downloadLink.download = getFileName();
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      
-      // Clean up the URL object after a short delay
-      setTimeout(() => URL.revokeObjectURL(url), 100);
     } catch (error) {
       console.error('Error downloading image:', error);
     }
