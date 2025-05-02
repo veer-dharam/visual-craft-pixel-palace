@@ -1,22 +1,16 @@
-
 import React, { useState } from 'react';
 import { Image } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
 import ImageEditor from '@/components/ImageEditor';
-
 const Index = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  
   const handleImageUpload = (file: File) => {
     setImageFile(file);
   };
-  
   const handleResetEditor = () => {
     setImageFile(null);
   };
-  
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b">
         <div className="container mx-auto py-4 px-6">
@@ -31,8 +25,7 @@ const Index = () => {
       
       {/* Main Content */}
       <main className="container mx-auto py-8 px-6">
-        {!imageFile ? (
-          <div className="max-w-3xl mx-auto">
+        {!imageFile ? <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Edit Your Images Online
@@ -69,19 +62,13 @@ const Index = () => {
                 <div className="bg-editor-light-purple/10 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                   <Sun className="h-8 w-8 text-editor-purple" />
                 </div>
-                <h3 className="font-medium text-lg mb-2">Basic Editing</h3>
+                <h3 className="font-medium text-lg mb-2">Essential Editing</h3>
                 <p className="text-gray-600 text-sm">
                   Adjust brightness, contrast, and more
                 </p>
               </div>
             </div>
-          </div>
-        ) : (
-          <ImageEditor 
-            imageFile={imageFile} 
-            onResetEditor={handleResetEditor}
-          />
-        )}
+          </div> : <ImageEditor imageFile={imageFile} onResetEditor={handleResetEditor} />}
       </main>
       
       {/* Footer */}
@@ -92,10 +79,7 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
-
 import { Crop, Sun } from 'lucide-react';
