@@ -1,16 +1,23 @@
+
 import React, { useState } from 'react';
-import { Image } from 'lucide-react';
+import { Image, Crop, Sun } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
 import ImageEditor from '@/components/ImageEditor';
+import AdBanner from '@/components/AdBanner';
+
 const Index = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
+  
   const handleImageUpload = (file: File) => {
     setImageFile(file);
   };
+  
   const handleResetEditor = () => {
     setImageFile(null);
   };
-  return <div className="min-h-screen bg-gray-50">
+  
+  return (
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b">
         <div className="container mx-auto py-4 px-6">
@@ -23,9 +30,13 @@ const Index = () => {
         </div>
       </header>
       
+      {/* Top banner ad */}
+      <AdBanner slot="1234567890" format="horizontal" className="bg-gray-100 py-2" />
+      
       {/* Main Content */}
       <main className="container mx-auto py-8 px-6">
-        {!imageFile ? <div className="max-w-3xl mx-auto">
+        {!imageFile ? (
+          <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Edit Your Images Online
@@ -36,6 +47,9 @@ const Index = () => {
             </div>
             
             <ImageUploader onImageUpload={handleImageUpload} />
+            
+            {/* Mid-page ad */}
+            <AdBanner slot="0987654321" className="my-8" />
             
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div className="p-4">
@@ -68,8 +82,20 @@ const Index = () => {
                 </p>
               </div>
             </div>
-          </div> : <ImageEditor imageFile={imageFile} onResetEditor={handleResetEditor} />}
+          </div>
+        ) : (
+          <>
+            <ImageEditor imageFile={imageFile} onResetEditor={handleResetEditor} />
+            {/* Sidebar ad for editor page */}
+            <div className="mt-6">
+              <AdBanner slot="1122334455" format="rectangle" />
+            </div>
+          </>
+        )}
       </main>
+      
+      {/* Bottom banner ad */}
+      <AdBanner slot="5544332211" format="horizontal" className="bg-gray-100 py-2" />
       
       {/* Footer */}
       <footer className="bg-white border-t mt-auto">
@@ -79,7 +105,8 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
-import { Crop, Sun } from 'lucide-react';
