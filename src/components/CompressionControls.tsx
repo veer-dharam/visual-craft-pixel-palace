@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { compressImage } from '@/lib/imageUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -19,6 +20,7 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
 }) => {
   const [quality, setQuality] = useState(90);
   const [targetSize, setTargetSize] = useState(Math.ceil(originalFileSize / 1024));
+  const [customTargetSize, setCustomTargetSize] = useState(String(Math.ceil(originalFileSize / 1024)));
   const [compressing, setCompressing] = useState(false);
   const isMobile = useIsMobile();
 
@@ -27,6 +29,16 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
       return `${Math.round(sizeInKB)} KB`;
     } else {
       return `${(sizeInKB / 1024).toFixed(2)} MB`;
+    }
+  };
+
+  const handleCustomSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCustomTargetSize(value);
+    
+    const numValue = Number(value);
+    if (!isNaN(numValue) && numValue > 0) {
+      setTargetSize(Math.min(numValue, Math.ceil(originalFileSize / 1024)));
     }
   };
 
@@ -103,9 +115,28 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
             max={Math.max(5000, Math.ceil(originalFileSize / 1024))}
             step={10}
             value={[targetSize]}
-            onValueChange={([value]) => setTargetSize(value)}
+            onValueChange={([value]) => {
+              setTargetSize(value);
+              setCustomTargetSize(String(value));
+            }}
             className={isMobile ? "py-4" : ""}
           />
+        </div>
+        
+        <div className="flex flex-col space-y-2">
+          <Label htmlFor="custom-target-size">Custom Target Size (KB)</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              id="custom-target-size"
+              type="number"
+              min="10"
+              max={Math.ceil(originalFileSize / 1024)}
+              value={customTargetSize}
+              onChange={handleCustomSizeChange}
+              className="flex-1"
+            />
+            <span className="text-sm font-medium">KB</span>
+          </div>
         </div>
         
         <Button 

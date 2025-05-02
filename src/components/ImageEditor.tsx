@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Loader } from 'lucide-react';
+import { Loader, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { loadImage, resizeImage, rotateImage, adjustImage, blobToFile } from '@/lib/imageUtils';
 import ResizeControls from './ResizeControls';
@@ -202,6 +202,23 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
     else return (bytes / 1048576).toFixed(1) + ' MB';
   };
   
+  const handleQuickDownload = () => {
+    if (!currentImageBlob || !imageFile) return;
+    
+    const downloadLink = document.createElement('a');
+    const url = URL.createObjectURL(currentImageBlob);
+    const fileName = imageFile.name.split('.')[0] || 'image';
+    const fileExt = imageFile.name.split('.').pop() || 'png';
+    const timestamp = new Date().getTime();
+    
+    downloadLink.href = url;
+    downloadLink.download = `${fileName}-edited-${timestamp}.${fileExt}`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  };
+  
   const renderToolControls = () => {
     if (!selectedTool) return (
       <div className="flex flex-col h-full justify-center items-center text-center p-4 sm:p-6 gap-4">
@@ -286,6 +303,16 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
             <span className="text-sm text-gray-500">
               {formatFileSize(currentImageBlob.size)}
             </span>
+          )}
+          {currentImageBlob && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleQuickDownload}
+              className="flex items-center gap-1"
+            >
+              <Download size={16} /> Download
+            </Button>
           )}
           <button
             onClick={onResetEditor}
