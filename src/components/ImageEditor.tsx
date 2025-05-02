@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Loader } from 'lucide-react';
 import { toast } from 'sonner';
@@ -11,6 +10,7 @@ import AdjustmentControls from './AdjustmentControls';
 import EditToolbar from './EditToolbar';
 import ImageDownloader from './ImageDownloader';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Tool = 'resize' | 'crop' | 'rotate' | 'background' | 'adjust' | 'compress';
 
@@ -192,44 +192,72 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
     }
   };
   
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Edit Image</h2>
-        <button
-          onClick={onResetEditor}
-          className="text-sm text-gray-500 hover:text-gray-700"
-        >
-          Start Over
-        </button>
-      </div>
-      
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="lg:w-2/3 flex flex-col gap-4">
-          <EditToolbar 
-            selectedTool={selectedTool} 
-            onSelectTool={handleSelectTool}
-            hasImage={!!currentImage}
+  // Get formatted file size
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    else return (bytes / 1048576).toFixed(1) + ' MB';
+  };
+  
+  const renderToolControls = () => {
+    if (!selectedTool) return (
+      <div className="flex flex-col h-full justify-center items-center text-center p-6 gap-4">
+        <p className="text-gray-600">Select a tool from the toolbar above to edit your image</p>
+        {currentImageBlob && imageFile && (
+          <ImageDownloader
+            imageBlob={currentImageBlob}
+            originalFileName={imageFile.name}
           />
-          
-          <div className="relative bg-gray-100 rounded-lg overflow-hidden h-[400px] flex items-center justify-center">
-            {isProcessing && (
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
-                <Loader className="h-8 w-8 text-white animate-spin" />
-              </div>
-            )}
-            
-            {currentImage ? (
-              <canvas
-                ref={canvasRef}
-                className="max-h-full max-w-full object-contain"
-              />
-            ) : (
-              <div className="text-gray-400">No image to preview</div>
-            )}
-          </div>
-          
-          {selectedTool === 'rotate' && currentImage && (
+        )}
+      </div>
+    );
+    
+    switch(selectedTool) {
+      case 'resize':
+        return currentImage ? (
+          <ResizeControls
+            originalWidth={originalDimensions.width}
+            originalHeight={originalDimensions.height}
+            onResize={handleResize}
+          />
+        ) : null;
+        
+      case 'crop':
+        return imageUrl ? (
+          <CropControls 
+            imageUrl={imageUrl}
+            onCropComplete={handleCropComplete}
+          />
+        ) : null;
+        
+      case 'compress':
+        return currentImage ? (
+          <CompressionControls
+            imageElement={currentImage}
+            originalFileSize={originalFileSize}
+            onCompressionComplete={handleCompressionComplete}
+          />
+        ) : null;
+        
+      case 'background':
+        return imageFile ? (
+          <BackgroundRemover
+            imageFile={imageFile}
+            onProcessingComplete={handleBackgroundRemovalComplete}
+          />
+        ) : null;
+        
+      case 'adjust':
+        return (
+          <AdjustmentControls
+            onApplyAdjustments={handleApplyAdjustments}
+          />
+        );
+        
+      case 'rotate':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium mb-2">Rotate Image</h3>
             <div className="flex justify-center gap-4">
               <Button onClick={() => handleRotate('counterclockwise')}>
                 Rotate Left
@@ -238,52 +266,72 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageFile, onResetEditor }) =
                 Rotate Right
               </Button>
             </div>
-          )}
-        </div>
+          </div>
+        );
         
-        <div className="lg:w-1/3 bg-white rounded-lg p-4 shadow-sm">
-          {!selectedTool && currentImageBlob && imageFile && (
-            <ImageDownloader
-              imageBlob={currentImageBlob}
-              originalFileName={imageFile.name}
-            />
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Edit Image</h2>
+        <div className="flex items-center gap-2">
+          {currentImageBlob && (
+            <span className="text-sm text-gray-500">
+              {formatFileSize(currentImageBlob.size)}
+            </span>
           )}
+          <button
+            onClick={onResetEditor}
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            Start Over
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex flex-col gap-6">
+        <EditToolbar 
+          selectedTool={selectedTool} 
+          onSelectTool={handleSelectTool}
+          hasImage={!!currentImage}
+        />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
+          <div className="lg:col-span-4 flex flex-col gap-4">
+            <div className="relative bg-gray-100 border border-gray-200 rounded-lg overflow-hidden h-[350px] flex items-center justify-center">
+              {isProcessing && (
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
+                  <Loader className="h-8 w-8 text-white animate-spin" />
+                </div>
+              )}
+              
+              {currentImage ? (
+                <canvas
+                  ref={canvasRef}
+                  className="max-h-full max-w-full object-contain"
+                />
+              ) : (
+                <div className="text-gray-400">No image to preview</div>
+              )}
+            </div>
+            
+            {currentImageBlob && imageFile && !selectedTool && (
+              <div className="flex justify-center">
+                <ImageDownloader
+                  imageBlob={currentImageBlob}
+                  originalFileName={imageFile.name}
+                />
+              </div>
+            )}
+          </div>
           
-          {selectedTool === 'resize' && currentImage && (
-            <ResizeControls
-              originalWidth={originalDimensions.width}
-              originalHeight={originalDimensions.height}
-              onResize={handleResize}
-            />
-          )}
-          
-          {selectedTool === 'crop' && imageUrl && (
-            <CropControls 
-              imageUrl={imageUrl}
-              onCropComplete={handleCropComplete}
-            />
-          )}
-          
-          {selectedTool === 'compress' && currentImage && (
-            <CompressionControls
-              imageElement={currentImage}
-              originalFileSize={originalFileSize}
-              onCompressionComplete={handleCompressionComplete}
-            />
-          )}
-          
-          {selectedTool === 'background' && imageFile && (
-            <BackgroundRemover
-              imageFile={imageFile}
-              onProcessingComplete={handleBackgroundRemovalComplete}
-            />
-          )}
-          
-          {selectedTool === 'adjust' && (
-            <AdjustmentControls
-              onApplyAdjustments={handleApplyAdjustments}
-            />
-          )}
+          <div className="lg:col-span-3 bg-white rounded-lg p-4 shadow-sm border border-gray-200 min-h-[300px]">
+            {renderToolControls()}
+          </div>
         </div>
       </div>
     </div>
