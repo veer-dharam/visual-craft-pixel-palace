@@ -12,7 +12,7 @@ const Footer = () => {
               <div className="bg-white rounded-full p-1.5">
                 <Image className="h-5 w-5 text-editor-purple" />
               </div>
-              <h3 className="font-bold text-xl">SizeIt.veer</h3>
+              <h3 className="font-bold text-xl">SizeIt</h3>
             </div>
             <p className="text-gray-300">
               Free online image editing tools for everyone. No signup required.
