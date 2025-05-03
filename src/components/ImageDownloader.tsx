@@ -28,15 +28,17 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
   
   const handleDownload = async () => {
     try {
+      // Create an image from the blob
+      const blobUrl = URL.createObjectURL(imageBlob);
       const img = new Image();
-      img.src = URL.createObjectURL(imageBlob);
+      img.src = blobUrl;
       
       await new Promise<void>((resolve) => {
         img.onload = () => resolve();
         img.onerror = () => resolve(); // Still resolve to handle errors gracefully
       });
       
-      // Always process the image to apply compression settings
+      // Create a canvas to apply compression and format conversion
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
@@ -45,7 +47,7 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
       if (ctx) {
         ctx.drawImage(img, 0, 0);
         
-        // Create blob with specified format and quality
+        // Convert to the selected format with specified quality
         const downloadBlob = await new Promise<Blob>((resolve, reject) => {
           canvas.toBlob(
             (blob) => {
@@ -57,7 +59,7 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
           );
         });
         
-        // Create download link and trigger it
+        // Create download link and trigger download
         const downloadLink = document.createElement('a');
         const url = URL.createObjectURL(downloadBlob);
         downloadLink.href = url;
@@ -66,10 +68,10 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
         downloadLink.click();
         document.body.removeChild(downloadLink);
         
-        // Clean up the URL object after a short delay
+        // Clean up
         setTimeout(() => {
           URL.revokeObjectURL(url);
-          URL.revokeObjectURL(img.src);
+          URL.revokeObjectURL(blobUrl);
         }, 100);
       }
     } catch (error) {
