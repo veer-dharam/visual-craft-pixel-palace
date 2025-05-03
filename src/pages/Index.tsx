@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
-import { Image, Crop, Sun } from 'lucide-react';
+import { Image, Crop, Sun, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ImageUploader from '@/components/ImageUploader';
 import ImageEditor from '@/components/ImageEditor';
 import AdBanner from '@/components/AdBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -23,11 +25,16 @@ const Index = () => {
       {/* Header */}
       <header className="bg-white border-b">
         <div className="container mx-auto py-3 sm:py-4 px-4 sm:px-6">
-          <div className="flex items-center space-x-4">
-            <div className="bg-editor-purple rounded-full p-1.5 sm:p-2">
-              <Image className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-editor-purple rounded-full p-1.5 sm:p-2">
+                <Image className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">PixelCraft.veer</h1>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">PixelCraft.veer</h1>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Home</Link>
+            </Button>
           </div>
         </div>
       </header>
