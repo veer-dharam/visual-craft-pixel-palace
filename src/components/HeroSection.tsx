@@ -46,12 +46,12 @@ const HeroSection = () => {
             <div className="relative">
               <img
                 src="/assets/hero-image.jpg"
-                alt="PixelCraft image editor interface"
+                alt="SizeIt image editor interface"
                 className="w-full h-auto object-cover"
               />
               <div className="absolute inset-0 bg-black bg-opacity-5"></div>
               <div className="absolute top-4 left-4 bg-white/90 rounded-lg px-3 py-1 text-sm font-medium text-gray-700 shadow-sm">
-                PixelCraft Editor
+                SizeIt Editor
               </div>
               <div className="absolute bottom-4 right-4 bg-editor-purple text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
                 <ArrowRight className="h-5 w-5" />

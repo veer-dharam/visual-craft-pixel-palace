@@ -24,7 +24,7 @@ const Header = () => {
           <div className="bg-editor-purple rounded-full p-1.5 sm:p-2">
             <Image className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
           </div>
-          <h1 className="font-bold text-xl sm:text-2xl text-gray-900">PixelCraft.veer</h1>
+          <h1 className="font-bold text-xl sm:text-2xl text-gray-900">SizeIt.veer</h1>
         </div>
         
         {/* Desktop Navigation */}
@@ -61,7 +61,7 @@ const Header = () => {
                     <div className="bg-editor-purple rounded-full p-1.5">
                       <Image className="h-5 w-5 text-white" />
                     </div>
-                    <h2 className="font-bold text-lg">PixelCraft</h2>
+                    <h2 className="font-bold text-lg">SizeIt</h2>
                   </div>
                   <Button 
                     variant="ghost" 

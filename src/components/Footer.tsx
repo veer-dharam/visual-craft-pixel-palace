@@ -12,7 +12,7 @@ const Footer = () => {
               <div className="bg-white rounded-full p-1.5">
                 <Image className="h-5 w-5 text-editor-purple" />
               </div>
-              <h3 className="font-bold text-xl">PixelCraft.veer</h3>
+              <h3 className="font-bold text-xl">SizeIt.veer</h3>
             </div>
             <p className="text-gray-300">
               Free online image editing tools for everyone. No signup required.
@@ -31,7 +31,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} PixelCraft. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} SizeIt. All rights reserved. Made by Dharambir</p>
           <p className="mt-2">All images are processed locally in your browser. Your privacy is our priority.</p>
         </div>
       </div>
