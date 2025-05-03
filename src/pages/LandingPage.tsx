@@ -6,6 +6,7 @@ import FeatureCard from '@/components/FeatureCard';
 import TestimonialCard from '@/components/TestimonialCard';
 import AdBanner from '@/components/AdBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
+
 const LandingPage = () => {
   const isMobile = useIsMobile();
   return <div className="min-h-screen bg-white">
@@ -289,10 +290,10 @@ const LandingPage = () => {
         </div>
       </section>
       
-      {/* Footer */}
+      {/* Footer - Modified to remove contact and legal pages */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-white rounded-full p-1.5">
@@ -312,23 +313,6 @@ const LandingPage = () => {
                 <li><a href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">How It Works</a></li>
                 <li><a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a></li>
                 <li><a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQ</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-bold text-lg mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="/privacy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/terms" className="text-gray-300 hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="/cookies" className="text-gray-300 hover:text-white transition-colors">Cookie Policy</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-bold text-lg mb-4">Contact</h3>
-              <ul className="space-y-2">
-                <li className="text-gray-300">Email: support@pixelcraft.com</li>
-                <li className="text-gray-300">Twitter: @pixelcraft</li>
               </ul>
             </div>
           </div>
@@ -355,4 +339,5 @@ const LandingPage = () => {
       </div>
     </div>;
 };
+
 export default LandingPage;
