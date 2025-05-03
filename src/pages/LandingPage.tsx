@@ -62,7 +62,7 @@ const LandingPage = () => {
               </div>
             </div>
             <div className="relative rounded-xl overflow-hidden shadow-2xl border border-gray-200">
-              <img src="/assets/hero-image.jpg" alt="PixelCraft image editor interface showing background removal feature" className="w-full h-auto" />
+              
               
             </div>
           </div>
