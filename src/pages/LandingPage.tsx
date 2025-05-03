@@ -6,12 +6,9 @@ import FeatureCard from '@/components/FeatureCard';
 import TestimonialCard from '@/components/TestimonialCard';
 import AdBanner from '@/components/AdBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const LandingPage = () => {
   const isMobile = useIsMobile();
-  
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="border-b bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
@@ -65,12 +62,8 @@ const LandingPage = () => {
               </div>
             </div>
             <div className="relative rounded-xl overflow-hidden shadow-2xl border border-gray-200">
-              <img 
-                src="/assets/hero-image.jpg" 
-                alt="PixelCraft image editor interface showing background removal feature" 
-                className="w-full h-auto"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+              <img src="/assets/hero-image.jpg" alt="PixelCraft image editor interface showing background removal feature" className="w-full h-auto" />
+              
             </div>
           </div>
         </div>
@@ -137,77 +130,17 @@ const LandingPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<ImageDown size={24} />}
-              title="Image Compression"
-              description="Reduce file size without compromising quality"
-              benefits={[
-                "Optimize images for web and social media",
-                "Choose your target file size",
-                "Maintain visual quality while reducing size",
-                "Download in multiple formats"
-              ]}
-            />
+            <FeatureCard icon={<ImageDown size={24} />} title="Image Compression" description="Reduce file size without compromising quality" benefits={["Optimize images for web and social media", "Choose your target file size", "Maintain visual quality while reducing size", "Download in multiple formats"]} />
             
-            <FeatureCard
-              icon={<Wand size={24} />}
-              title="Background Removal"
-              description="Remove backgrounds with one click"
-              benefits={[
-                "Instant AI-powered background removal",
-                "Perfect for product photos",
-                "Create transparent PNG images",
-                "No more manual masking required"
-              ]}
-            />
+            <FeatureCard icon={<Wand size={24} />} title="Background Removal" description="Remove backgrounds with one click" benefits={["Instant AI-powered background removal", "Perfect for product photos", "Create transparent PNG images", "No more manual masking required"]} />
             
-            <FeatureCard
-              icon={<Crop size={24} />}
-              title="Crop & Resize"
-              description="Perfect dimensions for any platform"
-              benefits={[
-                "Resize images to exact pixels or percentages",
-                "Crop to highlight important parts",
-                "Maintain aspect ratio automatically",
-                "Preset sizes for social media platforms"
-              ]}
-            />
+            <FeatureCard icon={<Crop size={24} />} title="Crop & Resize" description="Perfect dimensions for any platform" benefits={["Resize images to exact pixels or percentages", "Crop to highlight important parts", "Maintain aspect ratio automatically", "Preset sizes for social media platforms"]} />
             
-            <FeatureCard
-              icon={<RotateCw size={24} />}
-              title="Rotate & Flip"
-              description="Correct image orientation easily"
-              benefits={[
-                "Rotate images to any angle",
-                "Quick 90° rotation options",
-                "Horizontal and vertical flipping",
-                "Fix incorrectly oriented photos"
-              ]}
-            />
+            <FeatureCard icon={<RotateCw size={24} />} title="Rotate & Flip" description="Correct image orientation easily" benefits={["Rotate images to any angle", "Quick 90° rotation options", "Horizontal and vertical flipping", "Fix incorrectly oriented photos"]} />
             
-            <FeatureCard
-              icon={<Sun size={24} />}
-              title="Adjust & Enhance"
-              description="Perfect your image's appearance"
-              benefits={[
-                "Adjust brightness and contrast",
-                "Enhance colors and sharpness",
-                "Fix exposure problems",
-                "Make dull images pop"
-              ]}
-            />
+            <FeatureCard icon={<Sun size={24} />} title="Adjust & Enhance" description="Perfect your image's appearance" benefits={["Adjust brightness and contrast", "Enhance colors and sharpness", "Fix exposure problems", "Make dull images pop"]} />
             
-            <FeatureCard
-              icon={<Image size={24} />}
-              title="Format Conversion"
-              description="Save in your preferred format"
-              benefits={[
-                "Convert between JPG, PNG, and WebP",
-                "Choose optimal quality settings",
-                "Preserve transparency when needed",
-                "Optimize for different use cases"
-              ]}
-            />
+            <FeatureCard icon={<Image size={24} />} title="Format Conversion" description="Save in your preferred format" benefits={["Convert between JPG, PNG, and WebP", "Choose optimal quality settings", "Preserve transparency when needed", "Optimize for different use cases"]} />
           </div>
           
           <AdBanner slot="1357924680" format={isMobile ? "horizontal" : "rectangle"} className="mt-12" />
@@ -219,11 +152,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <img 
-                src="/assets/about-image.jpg" 
-                alt="Person editing images on laptop" 
-                className="rounded-xl shadow-lg"
-              />
+              <img src="/assets/about-image.jpg" alt="Person editing images on laptop" className="rounded-xl shadow-lg" />
             </div>
             
             <div className="space-y-6">
@@ -260,47 +189,17 @@ const LandingPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <TestimonialCard
-              quote="I use PixelCraft for all my product photos. The background removal tool saves me hours of work!"
-              author="Sarah Johnson"
-              role="E-commerce Store Owner"
-              rating={5}
-            />
+            <TestimonialCard quote="I use PixelCraft for all my product photos. The background removal tool saves me hours of work!" author="Sarah Johnson" role="E-commerce Store Owner" rating={5} />
             
-            <TestimonialCard
-              quote="As a blogger, I need to optimize dozens of images weekly. PixelCraft makes it incredibly easy and fast."
-              author="Michael Chen"
-              role="Content Creator"
-              rating={5}
-            />
+            <TestimonialCard quote="As a blogger, I need to optimize dozens of images weekly. PixelCraft makes it incredibly easy and fast." author="Michael Chen" role="Content Creator" rating={5} />
             
-            <TestimonialCard
-              quote="The compression tool is amazing. My website loads so much faster now that I've optimized all my images."
-              author="Emma Rodriguez"
-              role="Web Developer"
-              rating={4}
-            />
+            <TestimonialCard quote="The compression tool is amazing. My website loads so much faster now that I've optimized all my images." author="Emma Rodriguez" role="Web Developer" rating={4} />
             
-            <TestimonialCard
-              quote="I'm not tech-savvy at all, but even I found PixelCraft super easy to use. Great for quick edits!"
-              author="David Thompson"
-              role="Small Business Owner"
-              rating={5}
-            />
+            <TestimonialCard quote="I'm not tech-savvy at all, but even I found PixelCraft super easy to use. Great for quick edits!" author="David Thompson" role="Small Business Owner" rating={5} />
             
-            <TestimonialCard
-              quote="The fact that I can do all this without creating an account or downloading software is fantastic."
-              author="Lisa Patel"
-              role="Marketing Manager"
-              rating={4}
-            />
+            <TestimonialCard quote="The fact that I can do all this without creating an account or downloading software is fantastic." author="Lisa Patel" role="Marketing Manager" rating={4} />
             
-            <TestimonialCard
-              quote="I use it for my social media posts. The resize options make it perfect for different platforms."
-              author="James Wilson"
-              role="Social Media Enthusiast"
-              rating={5}
-            />
+            <TestimonialCard quote="I use it for my social media posts. The resize options make it perfect for different platforms." author="James Wilson" role="Social Media Enthusiast" rating={5} />
           </div>
         </div>
       </section>
@@ -443,7 +342,9 @@ const LandingPage = () => {
       
       {/* Add the following meta tags for SEO */}
       {/* The React Helmet component would be better for these but we're keeping it simple */}
-      <div style={{ display: 'none' }}>
+      <div style={{
+      display: 'none'
+    }}>
         <meta name="description" content="Free online image editing tools. Resize, compress, remove backgrounds and more with PixelCraft. No signup required." />
         <meta name="keywords" content="image editor, photo editor, background removal, image compression, resize image, crop image, free image tools" />
         <meta property="og:title" content="PixelCraft - Free Online Image Editor" />
@@ -452,8 +353,6 @@ const LandingPage = () => {
         <meta property="og:url" content="https://pixelcraft.veer.com" />
         <meta property="og:image" content="https://pixelcraft.veer.com/og-image.jpg" />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default LandingPage;
