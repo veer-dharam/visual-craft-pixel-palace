@@ -1,28 +1,23 @@
 
 import * as React from "react"
-import useEmblaCarousel, {
-  type UseEmblaCarouselType,
-} from "embla-carousel-react"
+import type { UseEmblaCarouselType } from "embla-carousel-react"
 
-export type CarouselApi = UseEmblaCarouselType[1]
-export type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
-export type CarouselOptions = UseCarouselParameters[0]
-export type CarouselPlugin = UseCarouselParameters[1]
-
-export type CarouselProps = {
-  opts?: CarouselOptions
-  plugins?: CarouselPlugin
-  orientation?: "horizontal" | "vertical"
-  setApi?: (api: CarouselApi) => void
+export interface CarouselApi {
+  canScrollNext: boolean
+  canScrollPrev: boolean
+  scrollNext: () => void
+  scrollPrev: () => void
+  scrollTo: (index: number) => void
+  selectedIndex: number
 }
 
-export type CarouselContextProps = {
-  carouselRef: ReturnType<typeof useEmblaCarousel>[0]
-  api: ReturnType<typeof useEmblaCarousel>[1]
-  scrollPrev: () => void
+export const CarouselContext = React.createContext<{
+  carouselRef: ReturnType<UseEmblaCarouselType>[0] | null
+  api: CarouselApi | null
   scrollNext: () => void
-  canScrollPrev: boolean
+  scrollPrev: () => void
   canScrollNext: boolean
-} & CarouselProps
+  canScrollPrev: boolean
+  orientation: "horizontal" | "vertical"
+} | null>(null)
 
-export const CarouselContext = React.createContext<CarouselContextProps | null>(null)
