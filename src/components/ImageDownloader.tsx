@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, FileImage, Check } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { toast } from 'sonner';
-import { Slider } from '@/components/ui/slider';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { useImageProcessing } from '@/contexts/ImageProcessingContext';
 
 interface ImageDownloaderProps {
   imageBlob: Blob;
@@ -17,18 +17,18 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
   originalFileName 
 }) => {
   const [selectedFormat, setSelectedFormat] = useState<'jpeg' | 'png' | 'webp'>('jpeg');
-  const [targetSizeKb, setTargetSizeKb] = useState<number>(100);
+  const { imageState } = useImageProcessing();
   
   const downloadImage = async () => {
     try {
       const fileName = getFileNameWithFormat(originalFileName, selectedFormat);
       
-      // Create a new blob with the appropriate MIME type
+      // Use the existing blob directly for PNG format
       let processedBlob = imageBlob;
       
       if (selectedFormat !== 'png') {
-        // For JPEG and WebP, try to match target filesize
-        processedBlob = await adjustBlobSize(imageBlob, selectedFormat, targetSizeKb);
+        // For JPEG and WebP, maintain the current compression state
+        processedBlob = await convertToFormat(imageBlob, selectedFormat);
       }
       
       // Create a download link
@@ -54,37 +54,20 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
     return `${baseName}.${format}`;
   };
   
-  // Adjust blob size to target size by changing quality or upscaling
-  const adjustBlobSize = async (
+  // Convert blob to selected format while maintaining quality
+  const convertToFormat = async (
     blob: Blob, 
-    format: 'jpeg' | 'png' | 'webp', 
-    targetKb: number
+    format: 'jpeg' | 'webp'
   ): Promise<Blob> => {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
         URL.revokeObjectURL(img.src);
         
-        // Start with high quality
-        let quality = 0.9;
-        let scaleFactor = 1.0;
-        const targetBytes = targetKb * 1024;
-        const currentBytes = blob.size;
-        
-        // If current size is smaller than target, we need to upscale
-        if (currentBytes < targetBytes) {
-          // Calculate scale factor to reach target size (approximate)
-          scaleFactor = Math.sqrt(targetBytes / currentBytes);
-          quality = 0.95; // High quality for upscaling
-        } else if (currentBytes > targetBytes) {
-          // Calculate quality to reach target size (approximate)
-          quality = Math.max(0.1, targetBytes / currentBytes);
-        }
-        
-        // Create canvas with adjusted size
+        // Create canvas with original dimensions
         const canvas = document.createElement('canvas');
-        canvas.width = img.width * scaleFactor;
-        canvas.height = img.height * scaleFactor;
+        canvas.width = img.width;
+        canvas.height = img.height;
         const ctx = canvas.getContext('2d');
         
         if (!ctx) {
@@ -92,16 +75,16 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
           return;
         }
         
-        // Draw image with adjusted size
+        // Draw image at original size
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         
-        // Convert to blob with quality setting
+        // Convert to blob with high quality setting for non-PNG formats
         canvas.toBlob(
           (newBlob) => {
             resolve(newBlob || blob);
           },
           `image/${format}`,
-          quality
+          0.95 // Use high quality
         );
       };
       
@@ -126,28 +109,14 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
             <SelectItem value="webp">WebP</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-      
-      {selectedFormat !== 'png' && (
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <Label htmlFor="target-size">Target File Size: {targetSizeKb} KB</Label>
-          </div>
-          <Slider
-            id="target-size"
-            min={10}
-            max={5000}
-            step={10}
-            value={[targetSizeKb]}
-            onValueChange={(value) => setTargetSizeKb(value[0])}
-          />
-          <div className="text-xs text-gray-500">
-            {selectedFormat === 'jpeg' ? 
-              'Adjust quality and size to match target file size' : 
-              'Adjust compression to match target file size'}
-          </div>
+        <div className="text-xs text-gray-500">
+          {selectedFormat === 'png' ? 
+            'PNG format preserves full quality with transparency' : 
+            selectedFormat === 'jpeg' ? 
+              'JPEG works best for photos with smaller file sizes' : 
+              'WebP offers good compression with quality preservation'}
         </div>
-      )}
+      </div>
 
       <Button 
         className="w-full" 
