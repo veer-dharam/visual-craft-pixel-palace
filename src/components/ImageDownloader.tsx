@@ -17,22 +17,14 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
   originalFileName 
 }) => {
   const [selectedFormat, setSelectedFormat] = useState<'jpeg' | 'png' | 'webp'>('jpeg');
-  const { imageState } = useImageProcessing();
   
   const downloadImage = async () => {
     try {
       const fileName = getFileNameWithFormat(originalFileName, selectedFormat);
       
-      // Use the existing blob directly for PNG format
-      let processedBlob = imageBlob;
-      
-      if (selectedFormat !== 'png') {
-        // For JPEG and WebP, maintain the current compression state
-        processedBlob = await convertToFormat(imageBlob, selectedFormat);
-      }
-      
-      // Create a download link
-      const url = URL.createObjectURL(processedBlob);
+      // Create a download link and use the current blob directly
+      // Since compression was already applied, we don't need to recompress
+      const url = URL.createObjectURL(imageBlob);
       const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
@@ -51,45 +43,7 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
   const getFileNameWithFormat = (originalName: string, format: string): string => {
     // Remove the original extension and add new one
     const baseName = originalName.replace(/\.[^/.]+$/, '');
-    return `${baseName}.${format}`;
-  };
-  
-  // Convert blob to selected format while maintaining quality
-  const convertToFormat = async (
-    blob: Blob, 
-    format: 'jpeg' | 'webp'
-  ): Promise<Blob> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(img.src);
-        
-        // Create canvas with original dimensions
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        
-        if (!ctx) {
-          resolve(blob);
-          return;
-        }
-        
-        // Draw image at original size
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        
-        // Convert to blob with high quality setting for non-PNG formats
-        canvas.toBlob(
-          (newBlob) => {
-            resolve(newBlob || blob);
-          },
-          `image/${format}`,
-          0.95 // Use high quality
-        );
-      };
-      
-      img.src = URL.createObjectURL(blob);
-    });
+    return `${baseName}_compressed.${format}`;
   };
 
   return (

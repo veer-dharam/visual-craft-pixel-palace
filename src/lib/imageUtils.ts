@@ -154,28 +154,107 @@ export const loadImage = (file: File): Promise<HTMLImageElement> => {
   });
 };
 
-// Enhanced function to compress image by quality
+// Enhanced function to compress image by quality with better quality preservation
 export const compressImage = (
   image: HTMLImageElement,
-  quality: number
+  targetSizeKB: number
 ): Promise<Blob> => {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     const canvas = document.createElement('canvas');
     canvas.width = image.width;
     canvas.height = image.height;
     const ctx = canvas.getContext('2d');
     
-    if (ctx) {
-      ctx.drawImage(image, 0, 0, image.width, image.height);
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          }
-        },
-        'image/jpeg',
-        quality / 100
-      );
+    if (!ctx) {
+      // Fallback if canvas context is not available
+      resolve(await createFallbackBlob(image));
+      return;
     }
+    
+    // Draw image on canvas with original dimensions
+    ctx.drawImage(image, 0, 0, image.width, image.height);
+    
+    // Start with high quality
+    let quality = 0.95;
+    let blob = await canvasToBlob(canvas, 'image/jpeg', quality);
+    let currentSize = blob.size / 1024;
+    
+    // If already smaller than target, return this high quality version
+    if (currentSize <= targetSizeKB) {
+      resolve(blob);
+      return;
+    }
+    
+    // Binary search to find optimal quality setting
+    let minQuality = 0.1;  // Don't go below 0.1 to maintain minimum quality
+    let maxQuality = 0.95;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 10;
+    
+    while (minQuality < maxQuality && attempts < MAX_ATTEMPTS) {
+      attempts++;
+      quality = (minQuality + maxQuality) / 2;
+      
+      blob = await canvasToBlob(canvas, 'image/jpeg', quality);
+      currentSize = blob.size / 1024;
+      
+      // Adjust quality range based on current size
+      if (Math.abs(currentSize - targetSizeKB) < 1) {
+        // Close enough to target
+        break;
+      } else if (currentSize > targetSizeKB) {
+        maxQuality = quality;
+      } else {
+        minQuality = quality;
+      }
+    }
+    
+    // If JPEG compression doesn't achieve good results, try WebP for better quality/size ratio
+    if (quality < 0.4 && 'toBlob' in canvas) {
+      try {
+        const webpBlob = await canvasToBlob(canvas, 'image/webp', quality * 1.5);
+        
+        // Use WebP if it's closer to target size and not larger
+        if (Math.abs(webpBlob.size / 1024 - targetSizeKB) < Math.abs(currentSize - targetSizeKB) &&
+            webpBlob.size / 1024 <= targetSizeKB * 1.1) {
+          resolve(webpBlob);
+          return;
+        }
+      } catch (e) {
+        // WebP not supported, continue with JPEG
+        console.log("WebP format not supported, using JPEG");
+      }
+    }
+    
+    resolve(blob);
   });
+};
+
+// Helper function to convert canvas to blob with given format and quality
+const canvasToBlob = (canvas: HTMLCanvasElement, format: string, quality: number): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error('Canvas to Blob conversion failed'));
+        }
+      },
+      format,
+      quality
+    );
+  });
+};
+
+// Fallback in case canvas context is not available
+const createFallbackBlob = async (image: HTMLImageElement): Promise<Blob> => {
+  // Create a simple blob from the image source if possible
+  try {
+    const response = await fetch(image.src);
+    return await response.blob();
+  } catch (e) {
+    // If all else fails, create an empty blob
+    return new Blob([], { type: 'image/jpeg' });
+  }
 };
