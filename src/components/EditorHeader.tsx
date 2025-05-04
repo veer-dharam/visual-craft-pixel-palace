@@ -6,7 +6,7 @@ interface EditorHeaderProps {
   currentImageBlob: Blob | null;
   formatFileSize: (bytes: number) => string;
   onResetEditor: () => void;
-  onQuickDownload?: () => void; // Added this prop
+  onQuickDownload?: () => void;
 }
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({

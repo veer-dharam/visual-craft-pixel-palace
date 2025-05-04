@@ -18,7 +18,8 @@ export interface CarouselApi {
   selectedIndex: number
 }
 
-export type EmblaCarouselType = NonNullable<ReturnType<UseEmblaCarouselType>[1]>
+// Define EmblaCarouselType properly to prevent type errors
+export type EmblaCarouselType = ReturnType<UseEmblaCarouselType>[1]
 
 export const CarouselContext = React.createContext<{
   carouselRef: React.RefObject<HTMLDivElement> | null
