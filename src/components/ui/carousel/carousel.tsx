@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils"
 import { 
   CarouselContext, 
   type CarouselApi,
-  type CarouselProps 
+  type CarouselProps,
+  type EmblaCarouselType
 } from "./carousel-context"
 
 const Carousel = React.forwardRef<
@@ -99,9 +100,8 @@ const Carousel = React.forwardRef<
     return (
       <CarouselContext.Provider
         value={{
-          carouselRef,
+          carouselRef: carouselRef as React.RefObject<HTMLDivElement>,
           api: api,
-          opts,
           orientation:
             orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
           scrollPrev,

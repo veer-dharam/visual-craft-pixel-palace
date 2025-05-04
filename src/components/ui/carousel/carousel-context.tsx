@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import type { EmblaCarouselType } from "embla-carousel-react"
+import type { UseEmblaCarouselType } from "embla-carousel-react"
 
 export interface CarouselProps {
   orientation?: "horizontal" | "vertical"
@@ -18,8 +18,10 @@ export interface CarouselApi {
   selectedIndex: number
 }
 
+export type EmblaCarouselType = NonNullable<ReturnType<UseEmblaCarouselType>[1]>
+
 export const CarouselContext = React.createContext<{
-  carouselRef: React.RefObject<HTMLElement> | null
+  carouselRef: React.RefObject<HTMLDivElement> | null
   api: EmblaCarouselType | null
   scrollNext: () => void
   scrollPrev: () => void
