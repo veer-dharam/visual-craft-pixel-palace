@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ImageProcessingProvider } from '@/contexts/ImageProcessingContext';
+import { ImageProcessingProvider, useImageProcessing } from '@/contexts/ImageProcessingContext';
 import { useDownloadUtils } from '@/hooks/use-download-utils';
 import EditorContent from './editor/EditorContent';
 import EditorHeader from './EditorHeader';

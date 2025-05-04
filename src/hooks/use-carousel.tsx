@@ -1,10 +1,6 @@
 
 import * as React from "react"
-import useEmblaCarousel, {
-  type UseEmblaCarouselType,
-} from "embla-carousel-react"
-
-import { CarouselApi, CarouselContext } from "@/components/ui/carousel/carousel-context"
+import { CarouselContext } from "@/components/ui/carousel/carousel-context"
 
 export function useCarousel() {
   const context = React.useContext(CarouselContext)
