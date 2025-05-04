@@ -1,6 +1,7 @@
 
 import * as React from "react"
 import type { UseEmblaCarouselType } from "embla-carousel-react"
+import useEmblaCarousel from "embla-carousel-react"
 
 export interface CarouselProps {
   orientation?: "horizontal" | "vertical"

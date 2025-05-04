@@ -61,10 +61,8 @@ const Index = () => {
       <main className="container mx-auto py-4 sm:py-8 px-4 sm:px-6">
         {!imageFile ? (
           <>
-            <HeroSection />
-            <HowItWorksSection />
-            
-            <div className="max-w-3xl mx-auto mt-12">
+            {/* Image Upload Section - Moved here from below */}
+            <div className="max-w-3xl mx-auto mt-8 mb-8">
               <div className="text-center mb-6 sm:mb-8">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                   Edit Your Images Online
@@ -76,6 +74,9 @@ const Index = () => {
               
               <ImageUploader onImageUpload={handleImageUpload} />
             </div>
+
+            <HeroSection />
+            <HowItWorksSection />
             
             {/* Mid-page ad */}
             <AdBanner slot="0987654321" className="my-6 sm:my-8" />
