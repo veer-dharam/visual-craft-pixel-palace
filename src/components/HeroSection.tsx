@@ -36,13 +36,6 @@ const HeroSection = () => {
             </div>
           </div>
           <div className="relative rounded-xl overflow-hidden shadow-2xl border border-gray-200">
-            <div className="bg-white p-3 rounded-t-xl border-b border-gray-200">
-              <div className="flex items-center space-x-1.5">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              </div>
-            </div>
             <div className="relative">
               <img
                 src="/assets/hero-image.jpg"
