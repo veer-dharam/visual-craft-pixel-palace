@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AdBanner from '@/components/AdBanner';
-
 const HeroSection = () => {
-  return (
-    <section className="py-12 md:py-24 bg-gradient-to-b from-gray-50 to-white">
+  return <section className="py-12 md:py-24 bg-gradient-to-b from-gray-50 to-white">
       <AdBanner slot="9876543210" format="horizontal" className="container mx-auto px-4 md:px-6 mb-8" />
       
       <div className="container mx-auto px-4 md:px-6">
@@ -20,7 +17,7 @@ const HeroSection = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="font-medium">
-              <Link to="/editor">Start Editing Now</Link>
+              <Link to="/editor">Resize now</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <a href="#features">Explore Features</a>
@@ -35,8 +32,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
