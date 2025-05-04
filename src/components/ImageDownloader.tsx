@@ -5,7 +5,6 @@ import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { useImageProcessing } from '@/contexts/ImageProcessingContext';
 
 interface ImageDownloaderProps {
   imageBlob: Blob;
@@ -22,8 +21,7 @@ const ImageDownloader: React.FC<ImageDownloaderProps> = ({
     try {
       const fileName = getFileNameWithFormat(originalFileName, selectedFormat);
       
-      // Create a download link and use the current blob directly
-      // Since compression was already applied, we don't need to recompress
+      // Create a download link and use the compressed blob directly
       const url = URL.createObjectURL(imageBlob);
       const a = document.createElement('a');
       a.href = url;

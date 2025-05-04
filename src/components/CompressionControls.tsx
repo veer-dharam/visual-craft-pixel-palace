@@ -37,11 +37,20 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
     if (!isNaN(numValue) && numValue > 0) {
       // Cap at original size as maximum
       setTargetSize(Math.min(numValue, Math.ceil(originalFileSize / 1024)));
+    } else if (value === '') {
+      // Allow empty input for better UX
+      setTargetSize(0);
     }
   };
 
   const handleCompress = async () => {
     if (!imageElement) return;
+    
+    // Prevent compression with zero or negative target size
+    if (targetSize <= 0) {
+      toast.error('Please enter a valid target size greater than 0 KB');
+      return;
+    }
     
     setCompressing(true);
     
@@ -76,7 +85,7 @@ const CompressionControls: React.FC<CompressionControlsProps> = ({
             <Input
               id="custom-target-size"
               type="number"
-              min="10"
+              min="1"
               max={Math.ceil(originalFileSize / 1024)}
               value={targetSize}
               onChange={handleTargetSizeChange}
